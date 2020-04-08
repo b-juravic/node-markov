@@ -17,26 +17,27 @@ class MarkovMachine {
    *  for text of "the cat in the hat", chains will be
    *  {"the": ["cat", "hat"], "cat": ["in"], "in": ["the"], "hat": [null]} */
 
+  // refactored makeChains
+
   makeChains() {
-    
+
     let markovWordObj = {};
 
     for (let i = 0; i < this.words.length; i++) {
-      if (i === this.words.length - 1) {
-        if (!markovWordObj[this.words[i]]) {
-          markovWordObj[this.words[i]] = [null];
-        } else {
-          markovWordObj[this.words[i]].push(null);
-        }
-      } else if ( i < this.words.length - 1) {
-      if (!markovWordObj[this.words[i]]) {
-        markovWordObj[this.words[i]] = [this.words[i+1]];
+      if ( i < this.words.length - 1) {
+        let value = markovWordObj[this.words[i]] || [];
+        value.push(this.words[i + 1]);
+
+        markovWordObj[this.words[i]] = value;
+
       } else {
-        markovWordObj[this.words[i]].push(this.words[i+1]);
+        let value = markovWordObj[this.words[i]] || [];
+        value.push(null);
+
+        markovWordObj[this.words[i]] = value;
       }
     }
-  }
-  this.markovChains = markovWordObj;
+    this.markovChains = markovWordObj;
   }
 
 
@@ -49,7 +50,7 @@ class MarkovMachine {
   // Partly from solution
 
 //   makeText(numWords = 100) {
-    
+
 //     let keys = Object.keys(this.markovChains);
 //     let key = MarkovMachine.choice(keys);
 //     let resultArr = [];
@@ -63,12 +64,10 @@ class MarkovMachine {
 //     let resultPhrase = resultArr.join(" ");
 //     return resultPhrase;
 //   }
-// }  
-
-// To revisit later - why does it not work?
+// }
 
 makeText(numWords = 100) {
-    
+
   let startIdx = Math.floor(Math.random() * this.words.length);
 
   let startWord = this.words[startIdx];
@@ -85,7 +84,7 @@ makeText(numWords = 100) {
     if (this.markovChains[resultArr[j]][randomWordIdx] === null) {
 
       break;
-      
+
     } else {
 
     resultArr.push(this.markovChains[resultArr[j]][randomWordIdx]);
@@ -95,7 +94,7 @@ makeText(numWords = 100) {
   let resultPhrase = resultArr.join(" ");
   return resultPhrase;
 }
-}  
+}
 
 module.exports = {
   MarkovMachine,
